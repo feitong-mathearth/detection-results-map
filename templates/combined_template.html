@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Detection Results Dashboard</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    h2 {
+      color: #333;
+    }
+
+    #map-container {
+      height: 900px;
+      margin-bottom: 40px;
+    }
+
+    .week-container {
+      margin-bottom: 30px;
+    }
+
+    .week-header {
+      cursor: pointer;
+      background-color: #007bff;
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+      text-align: center;
+    }
+
+    .graph-container {
+      display: none;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-top: none;
+    }
+
+    .weekly-summary {
+      max-width: 95%;
+      margin: 20px auto;
+    }
+
+    .daily-graphs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: space-between;
+    }
+
+    .daily-graph {
+      flex: 0 0 calc(50% - 10px);
+      box-sizing: border-box;
+    }
+
+    @media (max-width: 800px) {
+      .daily-graph {
+        flex: 0 0 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Detection Results Map</h2>
+  <div id="map-container">
+    {{ map_html | safe }}
+  </div>
+
+  <h2>Interactive Weekly Detection Breakdown</h2>
+
+  {% for week_label, graphs in weekly_graphs.items() %}
+    <div class="week-container">
+      <div class="week-header" onclick="toggleWeek('week{{ loop.index }}')">
+        {{ week_label }}
+      </div>
+      <div id="week{{ loop.index }}" class="graph-container">
+        <div class="weekly-summary">
+          {{ graphs.weekly_summary | safe }}
+        </div>
+        <div class="daily-graphs">
+          {% for daily_html in graphs.daily_graphs %}
+            <div class="daily-graph">
+              {{ daily_html | safe }}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+
+  <script>
+    function toggleWeek(id) {
+      var el = document.getElementById(id);
+      el.style.display = el.style.display === "block" ? "none" : "block";
+    }
+  </script>
+
+</body>
+</html>
